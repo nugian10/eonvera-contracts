@@ -1,0 +1,11 @@
+[profile.default]
+src = "contracts"
+test = "test"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.24"
+optimizer = true
+optimizer_runs = 200
+# BNB Chain mainnet chain ID is 56; tests run on a local EVM only.
+# NOTHING in this project deploys anywhere unless a human runs a
+# broadcast command with real keys — which is intentionally not set up.
