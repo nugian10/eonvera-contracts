@@ -8,7 +8,7 @@ Semua persiapan sudah selesai dan terverifikasi. Langkah satu-satunya yang harus
 | --- | --- |
 | Jaringan | BNB Chain mainnet, chain ID **56** |
 | Harga gas jaringan saat dicek | **0,05 gwei** (dibaca langsung dari RPC BSC) |
-| Gas deploy terukur (versi final) | 2.371.954 gas |
+| Gas deploy terukur (versi final) | 2.383.851 gas |
 | Estimasi biaya deploy | **± 0,00012 BNB (± Rp1.500)** — di bawah budget Rp3.000 |
 | Saldo wallet owner saat dicek | 0,001179 BNB (± Rp15.000) — cukup untuk deploy + transaksi admin awal |
 

@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {Eonvera, IAgentGate} from "../contracts/Eonvera.sol";
 import {MockAgentGate, RevertingAgentGate} from "../contracts/mocks/MockAgentGate.sol";
+import {AgentWallet} from "../contracts/mocks/AgentWallet.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract EonveraTest is Test {
@@ -252,5 +253,60 @@ contract EonveraTest is Test {
         _openWithAllowlist();
         uint256 id = _mintAs(agent);
         assertEq(nft.tokenURI(id), "ipfs://eonvera/1");
+    }
+
+    // -- continued build-out (v1.1) -----------------------------------------
+
+    function test_SupportsInterfaces() public view {
+        // ERC-165, ERC-721, ERC-721 Metadata, ERC-2981 royalty standard —
+        // marketplaces and wallets probe exactly these IDs.
+        assertTrue(nft.supportsInterface(0x01ffc9a7));
+        assertTrue(nft.supportsInterface(0x80ac58cd));
+        assertTrue(nft.supportsInterface(0x5b5e139f));
+        assertTrue(nft.supportsInterface(0x2a55205a));
+        assertFalse(nft.supportsInterface(0xffffffff));
+    }
+
+    function test_SetBaseURIAfterDeploy() public {
+        _openWithAllowlist();
+        uint256 id = _mintAs(agent);
+        vm.prank(owner);
+        nft.setBaseURI("https://eonvera.vercel.app/metadata/");
+        assertEq(nft.tokenURI(id), "https://eonvera.vercel.app/metadata/1");
+    }
+
+    function test_TreasuryChangePreservesCustomRoyalty() public {
+        _openWithAllowlist();
+        uint256 id = _mintAs(agent);
+        address newTreasury = makeAddr("newTreasury");
+        vm.startPrank(owner);
+        nft.setDefaultRoyalty(250); // 2.5%
+        nft.setTreasury(newTreasury);
+        vm.stopPrank();
+        (address receiver, uint256 amount) = nft.royaltyInfo(id, 1 ether);
+        assertEq(receiver, newTreasury);
+        assertEq(amount, 0.025 ether);
+        assertEq(nft.treasury(), newTreasury);
+    }
+
+    function test_RoyaltyFeeTooHighReverts() public {
+        vm.prank(owner);
+        vm.expectRevert(abi.encodeWithSelector(Eonvera.RoyaltyFeeTooHigh.selector, uint96(10_001)));
+        nft.setDefaultRoyalty(10_001);
+    }
+
+    function test_SmartWalletAgentCanMint() public {
+        // An agentic wallet may itself be a smart contract. The gate checks
+        // its Agent ID identity (here: allowlist), not its caller type, and
+        // _safeMint must be able to deliver the NFT to it.
+        AgentWallet wallet = new AgentWallet();
+        vm.deal(address(wallet), 1 ether);
+        vm.startPrank(owner);
+        nft.setAgentAllowed(address(wallet), true);
+        nft.setMintOpen(true);
+        vm.stopPrank();
+        uint256 id = wallet.mint(nft, PRICE);
+        assertEq(id, 1);
+        assertEq(nft.ownerOf(1), address(wallet));
     }
 }

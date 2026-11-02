@@ -1,6 +1,6 @@
 # Eonvera — Smart Contract (BELUM DILUNCURKAN)
 
-Kontrak NFT untuk proyek **Eonvera** (https://eonvera.vercel.app), ditulis mengikuti konsep situsnya persis. Status: **sudah dikompilasi dan lolos 17/17 tes lokal — belum di-deploy ke jaringan mana pun.**
+Kontrak NFT untuk proyek **Eonvera** (https://eonvera.vercel.app), ditulis mengikuti konsep situsnya persis. Status: **sudah dikompilasi dan lolos 23/23 tes lokal — belum di-deploy ke jaringan mana pun.**
 
 ## Berkas
 
@@ -8,7 +8,8 @@ Kontrak NFT untuk proyek **Eonvera** (https://eonvera.vercel.app), ditulis mengi
 | --- | --- |
 | `contracts/Eonvera.sol` | Kontrak utama ERC-721 `Eonvera` (simbol `EONV`) |
 | `contracts/mocks/MockAgentGate.sol` | Gate Agent ID contoh, HANYA untuk tes lokal — bukan untuk produksi |
-| `test/Eonvera.t.sol` | 17 tes Foundry, termasuk uji habis (sold out) pada 3.333 mint penuh |
+| `contracts/mocks/AgentWallet.sol` | Dompet agen smart contract contoh, HANYA untuk tes lokal (membuktikan agen smart wallet bisa mint) — bukan untuk produksi |
+| `test/Eonvera.t.sol` | 23 tes Foundry, termasuk uji habis (sold out) pada 3.333 mint penuh |
 | `foundry.toml` | Konfigurasi Foundry (solc 0.8.24, optimizer 200 runs) |
 
 ## Kesesuaian dengan konsep situs
@@ -39,7 +40,7 @@ forge build
 forge test
 ```
 
-Hasil terakhir: **17 passed, 0 failed** — termasuk skenario: non-agent ditolak, agent allowlist & gate bisa mint, gate rusak → fallback allowlist, pembayaran salah ditolak, mint tertutup saat awal, pause menghentikan mint, withdraw masuk treasury, royalti 5%, dan mint ke-3.334 ditolak `SoldOut`.
+Hasil terakhir: **23 passed, 0 failed** — termasuk skenario: non-agent ditolak, agent allowlist & gate bisa mint, gate rusak → fallback allowlist, pembayaran salah ditolak, mint tertutup saat awal, pause menghentikan mint, withdraw masuk treasury, royalti 5%, dan mint ke-3.334 ditolak `SoldOut`.
 
 ## Yang HARUS diputuskan sebelum peluncuran (jangan deploy sebelum ini jelas)
 

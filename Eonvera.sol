@@ -117,6 +117,7 @@ contract Eonvera is ERC721, ERC2981, Ownable, Pausable, ReentrancyGuard {
     error NothingToWithdraw();
     error WithdrawFailed();
     error TokenNotMinted(uint256 tokenId);
+    error RoyaltyFeeTooHigh(uint96 fee);
 
     // ---------------------------------------------------------------------
     // Constructor
@@ -324,6 +325,7 @@ contract Eonvera is ERC721, ERC2981, Ownable, Pausable, ReentrancyGuard {
     /// @notice Set the default ERC-2981 royalty (fee in basis points of the
     ///         sale price, e.g. 500 = 5%). Receiver is the treasury.
     function setDefaultRoyalty(uint96 feeNumerator) external onlyOwner {
+        if (feeNumerator > 10_000) revert RoyaltyFeeTooHigh(feeNumerator);
         _royaltyFee = feeNumerator;
         _setDefaultRoyalty(treasury, feeNumerator);
     }
